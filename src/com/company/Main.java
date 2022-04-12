@@ -1,8 +1,8 @@
 package com.company;
 
 import com.company.main.entities.database.concretes.UserDatabase;
-import com.company.main.entities.user.concretes.*;
 import com.company.main.managers.database.concretes.UserDatabaseManager;
+import com.company.main.managers.user.UserManager;
 
 public class Main
 {
@@ -11,13 +11,18 @@ public class Main
     {
         var database = new UserDatabase();
 
-        UserDatabaseManager manager = new UserDatabaseManager();
+        UserDatabaseManager databaseManager = new UserDatabaseManager(database);
 
-        var customer = new Customer(1, "EmreBerat");
+        UserManager userManager = new UserManager();
 
-        manager.add(database, customer, customer);
+        userManager.registerAsCustomer(databaseManager, "EmreBerat", "1234");
 
-        manager.remove(database, customer, customer);
+
+        userManager.tryLogin(databaseManager, "EmreBerat", "1234");
+
+        userManager.removeUser(databaseManager, databaseManager.find("EmreBerat"));
+
+        userManager.tryLogin(databaseManager, "EmreBerat", "1234");
     }
 
 }

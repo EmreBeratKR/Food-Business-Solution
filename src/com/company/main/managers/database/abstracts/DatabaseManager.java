@@ -11,19 +11,31 @@ import com.company.main.entities.user.abstracts.User;
 
 public abstract class DatabaseManager<T extends IDatabaseable> implements ILoggable
 {
+    protected final Database<T> database;
 
-    public void add(Database<T> database, T element, User raiser)
+
+    public DatabaseManager(Database<T> database)
+    {
+        this.database = database;
+    }
+
+    public void add(T element, User raiser)
     {
         database.add(element);
 
         log(getTargetLogs(getAddLogContent(), getAddLogContentForFeedback(), Date.random(), raiser, LogLevel.SUCCESS));
     }
 
-    public void remove(Database<T> database, T element, User raiser)
+    public void remove(T element, User raiser)
     {
         database.remove(element);
 
         log(getTargetLogs(getRemoveLogContent(), getRemoveLogContentForFeedback(), Date.random(), raiser, LogLevel.SUCCESS));
+    }
+
+    public int getAvailableId()
+    {
+        return database.availableId();
     }
 
     public abstract String getAddLogContent();

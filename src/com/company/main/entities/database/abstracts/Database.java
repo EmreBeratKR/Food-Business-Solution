@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 public abstract class Database<T extends IDatabaseable> implements Iterable<T>
 {
-    private final ArrayList<T> datas;
+    protected final ArrayList<T> datas;
 
 
     public Database()
@@ -29,9 +29,34 @@ public abstract class Database<T extends IDatabaseable> implements Iterable<T>
         datas.remove(element);
     }
 
+    public int availableId()
+    {
+        int result = 0;
+        boolean isValid;
+
+        while (true)
+        {
+            isValid = true;
+
+            for (var data : datas)
+            {
+                if (data.getId() == result)
+                {
+                    isValid = false;
+                    break;
+                }
+            }
+
+            if (isValid) return result;
+
+            result++;
+        }
+    }
+
     @Override
     public Iterator<T> iterator()
     {
         return datas.iterator();
     }
+
 }

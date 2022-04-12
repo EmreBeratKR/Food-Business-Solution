@@ -8,5 +8,5 @@ public interface ILoggable
 {
     void log(Log... logs);
 
-    Log[] getTargetLogs(String content, Date date, User raiser, LogLevel level);
+    Log[] getTargetLogs(String content, String userFeedback, Date date, User raiser, LogLevel level);
 }

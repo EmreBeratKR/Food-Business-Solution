@@ -8,7 +8,7 @@ public record LogData
 
         String content,
         Date date,
-        User trigger,
+        User raiser,
         LogLevel level
 
     )
@@ -16,6 +16,6 @@ public record LogData
     @Override
     public String toString()
     {
-        return String.format("[%s][%s][%s] : %s", date, level, trigger, content);
+        return String.format("[%s][%s][%s] : %s", date, level, raiser, content);
     }
 }

@@ -7,9 +7,9 @@ import com.company.main.entities.user.abstracts.User;
 public class DatabaseLog extends Log
 {
 
-    public DatabaseLog(String content, Date date, User sender, LogLevel level)
+    public DatabaseLog(String content, Date date, User raiser, LogLevel level)
     {
-        super(content, date, sender, level);
+        super(content, date, raiser, level);
     }
 
     @Override

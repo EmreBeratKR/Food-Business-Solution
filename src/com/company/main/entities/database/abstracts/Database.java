@@ -29,6 +29,16 @@ public abstract class Database<T extends IDatabaseable> implements Iterable<T>
         datas.remove(element);
     }
 
+    public T findById(int id)
+    {
+        for (var data : datas)
+        {
+            if (data.getId() == id) return data;
+        }
+
+        return null;
+    }
+
     public int availableId()
     {
         int result = 0;

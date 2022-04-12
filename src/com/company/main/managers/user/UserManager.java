@@ -2,6 +2,7 @@ package com.company.main.managers.user;
 
 import com.company.helpers.Date;
 import com.company.main.entities.log.abstracts.ILoggable;
+import com.company.main.entities.log.abstracts.ISendable;
 import com.company.main.entities.log.abstracts.Log;
 import com.company.main.entities.log.concretes.*;
 import com.company.main.entities.user.abstracts.User;
@@ -21,23 +22,24 @@ public class UserManager implements ILoggable
         return true;
     }
 
-    public boolean tryLogin(UserDatabaseManager manager, String username, String password)
+    public User login(UserDatabaseManager manager, String username, String password)
     {
         var user = manager.find(username);
         LogContent content;
 
         if (user != null)
         {
-            if (user.getPassword().equals(password)){
+            if (user.getPassword().equals(password))
+            {
                 content = LogContentHolder.loginSucceed;
                 log(getTargetLogs(content.forDatabase, content.forFeedback, Date.random(), user, LogLevel.SUCCESS));
-                return true;
+                return user;
             }
         }
 
         content = LogContentHolder.loginFailed;
         log(getTargetLogs(content.forDatabase, content.forFeedback, Date.random(), User.unknown(), LogLevel.FAIL));
-        return false;
+        return null;
     }
 
     public void removeUser(UserDatabaseManager manager, User user)
@@ -53,6 +55,17 @@ public class UserManager implements ILoggable
         for (var log : logs)
         {
             System.out.println(log.toLogFormat());
+
+            try
+            {
+                var sendable = ((ISendable) log);
+
+                sendable.send();
+            }
+            catch (ClassCastException e)
+            {
+                // un-sendable
+            }
         }
     }
 

@@ -4,27 +4,26 @@ import com.company.helpers.Date;
 import com.company.main.entities.log.abstracts.ILoggable;
 import com.company.main.entities.log.abstracts.ISendable;
 import com.company.main.entities.log.abstracts.Log;
+import com.company.main.entities.log.abstracts.SendableLog;
 import com.company.main.entities.log.concretes.*;
 import com.company.main.entities.user.abstracts.User;
-import com.company.main.entities.user.concretes.Customer;
 import com.company.main.managers.database.concretes.UserDatabaseManager;
 
-public class UserManager implements ILoggable
+public abstract class UserManager<T extends User> implements ILoggable
 {
-    public boolean registerAsCustomer(UserDatabaseManager manager, String username, String password)
+    protected final UserDatabaseManager userDatabaseManager;
+
+
+    public UserManager(UserDatabaseManager userDatabaseManager)
     {
-        if (manager.contains(username)) return false;
-
-        var user = new Customer(manager.getAvailableId(), username, password);
-
-        manager.add(user, user);
-
-        return true;
+        this.userDatabaseManager = userDatabaseManager;
     }
 
-    public User login(UserDatabaseManager manager, String username, String password)
+    public abstract boolean register(String username, String password);
+
+    public T login(String username, String password)
     {
-        var user = manager.find(username);
+        var user = userDatabaseManager.find(username);
         LogContent content;
 
         if (user != null)
@@ -32,8 +31,8 @@ public class UserManager implements ILoggable
             if (user.getPassword().equals(password))
             {
                 content = LogContentHolder.loginSucceed;
-                log(getTargetLogs(content.forDatabase, content.forFeedback, Date.random(), user, LogLevel.SUCCESS));
-                return user;
+                log(getTargetLogs(content.forDatabase, content.forFeedback + username, Date.random(), user, LogLevel.SUCCESS));
+                return ((T) user);
             }
         }
 
@@ -42,11 +41,11 @@ public class UserManager implements ILoggable
         return null;
     }
 
-    public void removeUser(UserDatabaseManager manager, User user)
+    public void removeUser(User user)
     {
         if (user == null) return;
 
-        manager.remove(user, user);
+        userDatabaseManager.remove(user, user);
     }
 
     @Override
@@ -58,9 +57,13 @@ public class UserManager implements ILoggable
 
             try
             {
-                var sendable = ((ISendable) log);
+                var sendable = ((SendableLog) log);
 
-                sendable.send();
+                if (sendable.feedback != null)
+                {
+                    sendable.send();
+                }
+
             }
             catch (ClassCastException e)
             {

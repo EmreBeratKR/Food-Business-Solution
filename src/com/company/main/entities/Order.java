@@ -1,8 +1,8 @@
 package com.company.main.entities;
 
-import com.company.main.entities.product.abstracts.Drink;
-import com.company.main.entities.product.abstracts.Food;
-import com.company.main.entities.product.abstracts.Ingredient;
+import com.company.main.entities.product.concretes.Drink;
+import com.company.main.entities.product.concretes.Food;
+import com.company.main.entities.product.concretes.Ingredient;
 
 import java.util.ArrayList;
 

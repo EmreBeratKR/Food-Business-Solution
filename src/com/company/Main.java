@@ -1,15 +1,17 @@
 package com.company;
 
+import com.company.helpers.Day;
 import com.company.main.entities.Order;
 import com.company.main.entities.database.concretes.ProductDatabase;
 import com.company.main.entities.database.concretes.UserDatabase;
-import com.company.main.entities.product.abstracts.Drink;
-import com.company.main.entities.product.abstracts.Food;
-import com.company.main.entities.product.abstracts.Ingredient;
+import com.company.main.entities.product.concretes.Drink;
+import com.company.main.entities.product.concretes.Food;
+import com.company.main.entities.product.concretes.Ingredient;
 import com.company.main.entities.user.concretes.Customer;
+import com.company.main.entities.user.concretes.Employee;
 import com.company.main.managers.database.concretes.UserDatabaseManager;
 import com.company.main.managers.user.CustomerManager;
-import com.company.main.managers.user.UserManager;
+import com.company.main.managers.user.EmployeeManager;
 
 import java.util.ArrayList;
 
@@ -39,11 +41,21 @@ public class Main
 
         UserDatabaseManager databaseManager = new UserDatabaseManager(database);
 
-        CustomerManager customerManager = new CustomerManager();
+        CustomerManager customerManager = new CustomerManager(databaseManager);
 
-        customerManager.registerAsCustomer(databaseManager, "EmreBerat", "1234");
+        EmployeeManager employeeManager = new EmployeeManager(databaseManager);
 
-        Customer customer = (Customer) customerManager.login(databaseManager, "EmreBerat", "1234");
+        customerManager.register("EmreBerat", "1234");
+
+        employeeManager.register("Berkay7", "password");
+
+        Customer customer = customerManager.login("EmreBerat", "1234");
+
+        Employee employee = employeeManager.login("Berkay7", "password");
+
+        employeeManager.setPosition(employee, "CEO");
+        employeeManager.setSalary(employee, 25000.90);
+        employeeManager.fire(employee);
 
         if (customer != null)
         {
@@ -61,17 +73,17 @@ public class Main
             var order = new Order(foods, drinks, ingredients);
 
             var foods1 = new ArrayList<Food>();
-            foods.add((Food) productDatabase.findById(1));
+            foods1.add((Food) productDatabase.findById(1));
 
             var drinks1 = new ArrayList<Drink>();
 
             var ingredients1 = new ArrayList<Ingredient>();
-            ingredients.add(((Ingredient) productDatabase.findById(6)));
+            ingredients1.add(((Ingredient) productDatabase.findById(6)));
 
             var order1 = new Order(foods1, drinks1, ingredients1);
 
             var foods2 = new ArrayList<Food>();
-            foods.add((Food) productDatabase.findById(0));
+            foods2.add((Food) productDatabase.findById(0));
 
             var drinks2 = new ArrayList<Drink>();
 
@@ -85,6 +97,8 @@ public class Main
             customerManager.cancelOrder(customer, order);
 
             customerManager.changeOrder(customer, order1, order2);
+
+            customerManager.payOrder(customer, order2, Day.random());
         }
 
     }
